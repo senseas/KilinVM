@@ -1,7 +1,4 @@
-package com.kilin.core;
-
-import com.kilin.ast.Node;
-import com.kilin.ast.NodeList;
+package com.kilin.ast;
 
 import java.util.Arrays;
 import java.util.List;

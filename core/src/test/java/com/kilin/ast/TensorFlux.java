@@ -1,4 +1,4 @@
-package com.kilin.core;
+package com.kilin.ast;
 
 public class TensorFlux {
     public static void compute(Tensor<None> tensor) { }

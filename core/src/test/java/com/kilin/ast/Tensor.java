@@ -1,4 +1,4 @@
-package com.kilin.core;
+package com.kilin.ast;
 
 import java.io.Serializable;
 
