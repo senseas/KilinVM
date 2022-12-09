@@ -101,7 +101,17 @@ public class Parser {
         NodeList<Node> list = new NodeList<>();
         Node node = new Statement(prarent);
         for (Node o : prarent.getChildrens()) {
-            if (o instanceof BlockStatement) {
+            if (o.previous() instanceof ParametersExpression && o instanceof BlockStatement) {
+                node.getChildrens().add(o);
+                list.add(node);
+                node = new Statement(prarent);
+                parserStatement(o);
+            } else if (o.previous() instanceof ArrayExpression && o instanceof BlockStatement) {
+                node.getChildrens().add(o);
+                list.add(node);
+                node = new Statement(prarent);
+                parserStatement(o);
+            } else if (o instanceof BlockStatement) {
                 list.addAll(node, o);
                 node = new Statement(prarent);
                 parserStatement(o);
@@ -132,28 +142,28 @@ public class Parser {
         AssignExpression.parser(node);
         InstanceOfDeclaration.parser(node);
         AssertExpression.parser(node);
-        ObjectCreationExpression.parser(node);
         VariableDeclaration.parser(node);
+        ConditionalExpression.parser(node);
+        for (Node n : node.getChildrens()) {
+            if (!n.getChildrens().isEmpty()) {
+                reduce(n);
+            }
+        }
+        ClassOrInterfaceDeclaration.parser(node);
+        ReturnStatement.parser(node);
+        BreakStatement.parser(node);
+        ContinueStatement.parser(node);
+        ObjectCreationExpression.parser(node);
         MethodCallExpression.parser(node);
         ForEachStatement.parser(node);
         ForStatement.parser(node);
         WhileStatement.parser(node);
-        ConditionalExpression.parser(node);
-        ReturnStatement.parser(node);
-        BreakStatement.parser(node);
-        ContinueStatement.parser(node);
         IfStatement.parser(node);
-        ClassOrInterfaceDeclaration.parser(node);
         EnumDeclaration.parser(node);
         LambdaExpression.parser(node);
         SynchronizedStatement.parser(node);
         ThrowStatement.parser(node);
         SwitchStatement.parser(node);
         TryStatement.parser(node);
-        for (Node n : node.getChildrens()) {
-            if (!n.getChildrens().isEmpty()) {
-                reduce(n);
-            }
-        }
     }
 }

@@ -37,7 +37,6 @@ public class ObjectCreationExpression extends TypeDeclaration {
 
     public static void parser(Node node) {
         Stream.of(node.getChildrens()).reduce((list, a, b) -> {
-            CallableDeclaration.parser(a);
             Stream.of(a.getChildrens()).reduce((c, m, n) -> {
                 if (m.equals(TokenType.NEW) && n instanceof CallableDeclaration o) {
                     if (b instanceof BlockStatement) {

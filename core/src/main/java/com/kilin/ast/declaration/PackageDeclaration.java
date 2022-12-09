@@ -5,6 +5,8 @@ import com.kilin.ast.expression.Name;
 import com.kilin.ast.lexer.TokenType;
 import com.kilin.ast.Node;
 
+import static com.kilin.ast.lexer.TokenType.PACKAGE;
+
 public class PackageDeclaration extends Declaration {
     private Name name;
 
@@ -21,7 +23,7 @@ public class PackageDeclaration extends Declaration {
 
     public static void parser(Node node) {
         Stream.of(node.getChildrens()).reduce(((list, a, b) -> {
-            if (a.equals(TokenType.PACKAGE)) {
+            if (a.equals(PACKAGE)) {
                 PackageDeclaration declare = new PackageDeclaration(node.getPrarent(), (Name) b);
                 node.getPrarent().replace(node, declare);
                 node.getChildrens().remove(a);

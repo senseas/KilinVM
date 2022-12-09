@@ -99,6 +99,28 @@ public class Node extends Token {
         return childrens.get(childrens.size() - 1).getClass().equals(clas);
     }
 
+    public Node next() {
+        if (Objects.nonNull(getPrarent())) {
+            NodeList<Node> childrens = getPrarent().getChildrens();
+            int index = childrens.indexOf(this) + 1;
+            if (index < childrens.size()) {
+                return childrens.get(index);
+            }
+        }
+        return null;
+    }
+
+    public Node previous() {
+        if (Objects.nonNull(getPrarent())) {
+            NodeList<Node> childrens = getPrarent().getChildrens();
+            int index = childrens.indexOf(this) - 1;
+            if (0 <= index) {
+                return childrens.get(index);
+            }
+        }
+        return null;
+    }
+
     public boolean isLast(Node node) {
         return getChildrens().last() == node;
     }

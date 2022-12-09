@@ -23,6 +23,11 @@ public class ClassOrInterfaceDeclaration extends TypeDeclaration {
         this.modifiers = modifiers;
         this.name = name;
         this.body = body;
+
+        this.name.setPrarent(this);
+        this.body.setPrarent(this);
+
+        getChildrens().addAll(name, body);
     }
 
     public static void parser(Node node) {

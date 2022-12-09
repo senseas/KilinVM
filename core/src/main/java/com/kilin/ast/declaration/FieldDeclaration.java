@@ -1,18 +1,13 @@
 package com.kilin.ast.declaration;
 
-import com.kilin.ast.NodeList;
+import com.kilin.ast.Node;
 import com.kilin.ast.Stream;
 import com.kilin.ast.expression.Expression;
 import com.kilin.ast.expression.Name;
-import com.kilin.ast.expression.ParametersExpression;
-import com.kilin.ast.lexer.Token;
 import com.kilin.ast.lexer.TokenType;
 import com.kilin.ast.type.Type;
-import com.kilin.ast.Node;
 
 import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 public class FieldDeclaration extends Declaration {
     private List<TokenType> modifiers;
@@ -20,8 +15,30 @@ public class FieldDeclaration extends Declaration {
     private Name name;
     private Expression initializer;
 
-    public FieldDeclaration(Node prarent) {
+    public FieldDeclaration(Node prarent, List<TokenType> modifiers, Type type, Name name) {
         super(prarent);
+        this.modifiers = modifiers;
+        this.type = type;
+        this.name = name;
+
+        this.type.setPrarent(this);
+        this.name.setPrarent(this);
+
+        getChildrens().addAll(type, name);
+    }
+
+    public FieldDeclaration(Node prarent, List<TokenType> modifiers, Type type, Name name, Expression initializer) {
+        super(prarent);
+        this.modifiers = modifiers;
+        this.type = type;
+        this.name = name;
+        this.initializer = initializer;
+
+        this.type.setPrarent(this);
+        this.name.setPrarent(this);
+        this.initializer.setPrarent(this);
+
+        getChildrens().addAll(type, name, initializer);
     }
 
     public static void parser(Node node) {
@@ -29,25 +46,9 @@ public class FieldDeclaration extends Declaration {
         if (node instanceof FieldDeclaration) return;
         Stream.of(node.getChildrens()).reduce((list, a, b) -> {
             Stream.of(a.getChildrens()).reduce((c, m, n) -> {
-                if (m instanceof Name && n instanceof Name && !(a.endsTypeof(ParametersExpression.class)||a.endsTypeof(CallableDeclaration.class))) {
-                    List<Node> modifiers = a.getChildrens().stream().filter(e -> Field_Modifiers.contains(e.getTokenType())).toList();
-                    a.getChildrens().removeAll(modifiers);
-                    a.getChildrens().removeAll(List.of(m, n));
-
-                    FieldDeclaration declare = new FieldDeclaration(node.getPrarent());
-                    declare.setModifiers(modifiers.stream().map(Token::getTokenType).collect(Collectors.toList()));
-                    declare.setType(Type.getType(m));
-                    declare.setName((Name) n);
-                    declare.getChildrens().addAll(declare.getType(), declare.getName());
-
-                    NodeList<Expression> split = a.split(TokenType.ASSIGN);
-                    if (Objects.nonNull(split)) {
-                        Expression expression = split.last();
-                        expression.setPrarent(declare);
-                        declare.setInitializer(expression);
-                        declare.getChildrens().add(expression);
-                    }
-
+                if (!a.endsTypeof(CallableDeclaration.class) && m instanceof Name && n instanceof Name) {
+                    List<TokenType> modifiers = a.getFieldModifiers();
+                    FieldDeclaration declare = new FieldDeclaration(node.getPrarent(), modifiers, Type.getType(m), (Name) n);
                     node.replace(a, declare);
                     c.clear();
                 }
@@ -59,31 +60,16 @@ public class FieldDeclaration extends Declaration {
         return modifiers;
     }
 
-    public void setModifiers(List<TokenType> modifiers) {
-        this.modifiers = modifiers;
-    }
-
     public Type getType() {
         return type;
-    }
-
-    public void setType(Type type) {
-        this.type = type;
     }
 
     public Name getName() {
         return name;
     }
 
-    public void setName(Name name) {
-        this.name = name;
-    }
-
     public Expression getInitializer() {
         return initializer;
     }
 
-    public void setInitializer(Expression initializer) {
-        this.initializer = initializer;
-    }
 }

@@ -10,6 +10,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import static com.kilin.ast.lexer.TokenType.ENUM;
+
 public class EnumDeclaration extends TypeDeclaration {
     private List<Object> implementedTypes;
     private List<TokenType> modifiers;
@@ -35,12 +37,9 @@ public class EnumDeclaration extends TypeDeclaration {
         Stream.of(node.getChildrens()).reduce((list, a, b) -> {
             if (b instanceof BlockStatement) {
                 Stream.of(a.getChildrens()).reduce((c, m, n) -> {
-                    if (m.equals(TokenType.ENUM)) {
+                    if (m.equals(ENUM)) {
                         List<TokenType> modifiers = a.getFieldModifiers();
                         EnumDeclaration declare = new EnumDeclaration(node.getPrarent(), modifiers, (Name) n, (BlockStatement) b);
-                        b.setPrarent(declare);
-                        declare.setChildrens(a.getChildrens());
-                        declare.getChildrens().add(b);
                         a.getChildrens().remove(m);
 
                         node.replaceAndRemove(a, declare, b);
