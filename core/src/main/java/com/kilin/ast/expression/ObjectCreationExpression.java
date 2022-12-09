@@ -6,6 +6,8 @@ import com.kilin.ast.declaration.*;
 import com.kilin.ast.lexer.TokenType;
 import com.kilin.ast.statement.BlockStatement;
 
+import java.util.List;
+
 public class ObjectCreationExpression extends TypeDeclaration {
     private Name name;
     private Expression parameters;
@@ -36,28 +38,22 @@ public class ObjectCreationExpression extends TypeDeclaration {
     }
 
     public static void parser(Node node) {
-        Stream.of(node.getChildrens()).reduce((list, a, b) -> {
-            Stream.of(a.getChildrens()).reduce((c, m, n) -> {
-                if (m.equals(TokenType.NEW) && n instanceof CallableDeclaration o) {
-                    if (b instanceof BlockStatement) {
-                        ObjectCreationExpression expression = new ObjectCreationExpression(node, (Name) o.getExpression(), o.getParameters(), (BlockStatement) b);
-                        a.replace(m, expression);
-                        a.getChildrens().remove(n);
-                        b.setPrarent(expression);
-
-                        ConstructorDeclaration.parser(b);
-                        MethodDeclaration.parser(b);
-                        FieldDeclaration.parser(b);
-
-                        node.getChildrens().remove(b);
-                        list.remove(b);
-                    } else {
-                        ObjectCreationExpression expression = new ObjectCreationExpression(node, (Name) o.getExpression(), o.getParameters());
-                        a.replace(m, expression);
-                        a.getChildrens().remove(n);
-                    }
+        Stream.of(node.getChildrens()).reduce((list, a, b, c) -> {
+            if (a.equals(TokenType.NEW) && b instanceof CallableDeclaration o) {
+                if (c instanceof BlockStatement) {
+                    ObjectCreationExpression expression = new ObjectCreationExpression(node, (Name) o.getExpression(), o.getParameters(), (BlockStatement) c);
+                    node.replace(a, expression);
+                    node.getChildrens().removeAll(b, c);
+                    ConstructorDeclaration.parser(c);
+                    MethodDeclaration.parser(c);
+                    FieldDeclaration.parser(c);
+                    list.removeAll(List.of(b, c));
+                } else {
+                    ObjectCreationExpression expression = new ObjectCreationExpression(node, (Name) o.getExpression(), o.getParameters());
+                    node.replace(a, expression);
+                    node.getChildrens().remove(b);
                 }
-            });
+            }
         });
     }
 

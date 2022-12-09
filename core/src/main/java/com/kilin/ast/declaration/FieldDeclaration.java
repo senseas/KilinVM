@@ -44,15 +44,14 @@ public class FieldDeclaration extends Declaration {
     public static void parser(Node node) {
         if (!(node.getPrarent() instanceof ClassOrInterfaceDeclaration)) return;
         if (node instanceof FieldDeclaration) return;
-        Stream.of(node.getChildrens()).reduce((list, a, b) -> {
-            Stream.of(a.getChildrens()).reduce((c, m, n) -> {
-                if (!a.endsTypeof(CallableDeclaration.class) && m instanceof Name && n instanceof Name) {
-                    List<TokenType> modifiers = a.getFieldModifiers();
-                    FieldDeclaration declare = new FieldDeclaration(node.getPrarent(), modifiers, Type.getType(m), (Name) n);
-                    node.replace(a, declare);
-                    c.clear();
-                }
-            });
+
+        Stream.of(node.getChildrens()).reduce((c, m, n) -> {
+            if (!node.endsTypeof(CallableDeclaration.class) && m instanceof Name && n instanceof Name) {
+                List<TokenType> modifiers = node.getFieldModifiers();
+                FieldDeclaration declare = new FieldDeclaration(node.getPrarent(), modifiers, Type.getType(m), (Name) n);
+                node.getPrarent().replace(node, declare);
+                c.clear();
+            }
         });
     }
 

@@ -33,19 +33,15 @@ public class ConstructorDeclaration extends Declaration {
     public static void parser(Node node) {
         if (!(node.getPrarent() instanceof TypeDeclaration)) return;
         if (node instanceof ConstructorDeclaration) return;
-        Stream.of(node.getChildrens()).reduce((list, a, b) -> {
-            if (b instanceof BlockStatement) {
-                CallableDeclaration.parser(a);
-                Stream.of(a.getChildrens()).reduce((c, m, n) -> {
-                    if (n instanceof CallableDeclaration o) {
-                        List<TokenType> modifiers = a.getMethodModifiers();
-                        if (a.isFirst(n)) {
-                            ConstructorDeclaration declare = new ConstructorDeclaration(node.getPrarent(), modifiers, (Name) o.getExpression(), o.getParameters(), (BlockStatement) b);
-                            TypeParametersExpression.parser(declare);
-                            node.replaceAndRemove(a, declare, b);
-                        }
-                    }
-                });
+
+        Stream.of(node.getChildrens()).reduce((c, m, n, b) -> {
+            if (n instanceof CallableDeclaration o) {
+                List<TokenType> modifiers = node.getMethodModifiers();
+                if (node.isFirst(n)) {
+                    ConstructorDeclaration declare = new ConstructorDeclaration(node.getPrarent(), modifiers, (Name) o.getExpression(), o.getParameters(), (BlockStatement) b);
+                    TypeParametersExpression.parser(declare);
+                    node.getPrarent().replaceAndRemove(node, declare, b);
+                }
             }
         });
     }

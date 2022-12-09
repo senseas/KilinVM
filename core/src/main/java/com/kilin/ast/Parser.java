@@ -139,6 +139,7 @@ public class Parser {
         UnaryExpression.parser(node);
         BinaryExpression.parser(node);
         ConditionalExpression.parser(node);
+        ObjectCreationExpression.parser(node);
         AssignExpression.parser(node);
         InstanceOfDeclaration.parser(node);
         AssertExpression.parser(node);
@@ -153,7 +154,6 @@ public class Parser {
         ReturnStatement.parser(node);
         BreakStatement.parser(node);
         ContinueStatement.parser(node);
-        ObjectCreationExpression.parser(node);
         MethodCallExpression.parser(node);
         ForEachStatement.parser(node);
         ForStatement.parser(node);
