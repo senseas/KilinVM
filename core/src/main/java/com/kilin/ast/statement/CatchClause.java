@@ -1,10 +1,10 @@
 package com.kilin.ast.statement;
 
-import com.kilin.ast.lexer.TokenType;
 import com.kilin.ast.Node;
 import com.kilin.ast.Stream;
 import com.kilin.ast.expression.Expression;
 import com.kilin.ast.expression.ParametersExpression;
+import com.kilin.ast.lexer.TokenType;
 
 public class CatchClause extends Statement {
     private Expression parameter;
@@ -23,16 +23,15 @@ public class CatchClause extends Statement {
     }
 
     public static void parser(Node node) {
-        Stream.of(node.getChildrens()).reduce((list, a, b) -> {
-            Stream.of(a.getChildrens()).reduce((c, m, n) -> {
-                if (m.equals(TokenType.CATCH) && n instanceof ParametersExpression) {
-                    //create CatchClause and set Prarent，Parameters
-                    CatchClause statement = new CatchClause(node, (Expression) n, (BlockStatement) b);
-                    //remove CatchNode and Parameters
-                    node.replaceAndRemove(a, statement, b);
-                    list.remove(b);
-                }
-            });
+        Stream.of(node.getChildrens()).reduce((c, m, n) -> {
+            if (m.equals(TokenType.CATCH) && n instanceof ParametersExpression) {
+                Node b = node.next();
+                //create CatchClause and set Prarent，Parameters
+                CatchClause statement = new CatchClause(node, (Expression) n, (BlockStatement) b);
+                //remove CatchNode and Parameters
+                node.getPrarent().replace(node, statement);
+                node.getPrarent().getChildrens().remove(b);
+            }
         });
     }
 }

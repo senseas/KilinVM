@@ -3,8 +3,9 @@ package com.kilin.ast.expression;
 import com.kilin.ast.Node;
 import com.kilin.ast.Stream;
 import com.kilin.ast.declaration.*;
-import com.kilin.ast.lexer.TokenType;
 import com.kilin.ast.statement.BlockStatement;
+
+import static com.kilin.ast.lexer.TokenType.NEW;
 
 public class ObjectCreationExpression extends TypeDeclaration {
     private Name name;
@@ -36,29 +37,24 @@ public class ObjectCreationExpression extends TypeDeclaration {
     }
 
     public static void parser(Node node) {
-        Stream.of(node.getChildrens()).reduce((list, a, b) -> {
-            CallableDeclaration.parser(a);
-            Stream.of(a.getChildrens()).reduce((c, m, n) -> {
-                if (m.equals(TokenType.NEW) && n instanceof CallableDeclaration o) {
-                    if (b instanceof BlockStatement) {
-                        ObjectCreationExpression expression = new ObjectCreationExpression(node, (Name) o.getExpression(), o.getParameters(), (BlockStatement) b);
-                        a.replace(m, expression);
-                        a.getChildrens().remove(n);
-                        b.setPrarent(expression);
+        Stream.of(node.getChildrens()).reduce((list, m, n) -> {
+            if (m.equals(NEW) && n instanceof CallableDeclaration o) {
+                Node b = node.next();
+                if (b instanceof BlockStatement) {
+                    ObjectCreationExpression expression = new ObjectCreationExpression(node, (Name) o.getExpression(), o.getParameters(), (BlockStatement) b);
+                    node.replace(m, expression);
+                    node.getChildrens().remove(n);
 
-                        ConstructorDeclaration.parser(b);
-                        MethodDeclaration.parser(b);
-                        FieldDeclaration.parser(b);
-
-                        node.getChildrens().remove(b);
-                        list.remove(b);
-                    } else {
-                        ObjectCreationExpression expression = new ObjectCreationExpression(node, (Name) o.getExpression(), o.getParameters());
-                        a.replace(m, expression);
-                        a.getChildrens().remove(n);
-                    }
+                    ConstructorDeclaration.parser(b);
+                    MethodDeclaration.parser(b);
+                    FieldDeclaration.parser(b);
+                    node.getPrarent().getChildrens().remove(b);
+                } else {
+                    ObjectCreationExpression expression = new ObjectCreationExpression(node, (Name) o.getExpression(), o.getParameters());
+                    node.replace(m, expression);
+                    node.getChildrens().remove(n);
                 }
-            });
+            }
         });
     }
 
