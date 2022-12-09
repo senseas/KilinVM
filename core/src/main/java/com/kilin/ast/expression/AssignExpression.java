@@ -29,13 +29,11 @@ public class AssignExpression extends Expression implements AssignNode {
     public static void parser(Node node) {
         ConditionalExpression.parser(node);
         Stream.of(node.getChildrens()).reduce((list, m, n, o) -> {
-            if (Objects.nonNull(m) && Objects.nonNull(n) && Objects.nonNull(o)) {
-                if (ASSIGN_TYPE.contains(n.getTokenType())) {
-                    AssignExpression expression = new AssignExpression(node, (Expression) m, (Expression) o, n.getTokenType());
-                    node.replaceAndRemove(m, expression, n);
-                    node.getChildrens().remove(o);
-                    list.removeAll(List.of(n, o));
-                }
+            if (Objects.nonNull(n) && ASSIGN_TYPE.contains(n.getTokenType())) {
+                AssignExpression expression = new AssignExpression(node, (Expression) m, (Expression) o, n.getTokenType());
+                node.replaceAndRemove(m, expression, n);
+                node.getChildrens().remove(o);
+                list.removeAll(List.of(n, o));
             }
         });
     }

@@ -23,6 +23,11 @@ public class ClassOrInterfaceDeclaration extends TypeDeclaration {
         this.modifiers = modifiers;
         this.name = name;
         this.body = body;
+
+        this.name.setPrarent(this);
+        this.body.setPrarent(this);
+
+        getChildrens().addAll(name, body);
     }
 
     public static void parser(Node node) {
@@ -31,28 +36,21 @@ public class ClassOrInterfaceDeclaration extends TypeDeclaration {
         ImportDeclaration.parser(node);
 
         Stream.of(node.getChildrens()).reduce((list, a, b) -> {
-            if (b instanceof BlockStatement) {
-                Stream.of(a.getChildrens()).reduce((c, m, n) -> {
-                    if (m.equals(TokenType.CLASS)) {
-                        List<TokenType> modifiers = a.getFieldModifiers();
-                        ClassOrInterfaceDeclaration declare = new ClassOrInterfaceDeclaration(node.getPrarent(), modifiers, (Name) n, (BlockStatement) b);
+            Stream.of(a.getChildrens()).reduce((c, m, n) -> {
+                if (m.equals(TokenType.CLASS)) {
+                    List<TokenType> modifiers = a.getFieldModifiers();
+                    ClassOrInterfaceDeclaration declare = new ClassOrInterfaceDeclaration(node.getPrarent(), modifiers, (Name) n, (BlockStatement) b);
+                    node.replaceAndRemove(a, declare, b);
 
-                        b.setPrarent(declare);
-                        declare.setChildrens(a.getChildrens());
-                        declare.getChildrens().add(b);
-                        a.getChildrens().remove(m);
-                        node.replaceAndRemove(a, declare, b);
+                    TypeParametersExpression.parser(declare);
+                    parserImplements(declare);
+                    parserExtends(declare);
 
-                        TypeParametersExpression.parser(declare);
-                        parserImplements(declare);
-                        parserExtends(declare);
-
-                        ConstructorDeclaration.parser(b);
-                        MethodDeclaration.parser(b);
-                        FieldDeclaration.parser(b);
-                    }
-                });
-            }
+                    ConstructorDeclaration.parser(b);
+                    MethodDeclaration.parser(b);
+                    FieldDeclaration.parser(b);
+                }
+            });
         });
     }
 
