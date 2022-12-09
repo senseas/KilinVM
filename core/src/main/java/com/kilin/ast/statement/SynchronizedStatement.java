@@ -23,16 +23,15 @@ public class SynchronizedStatement extends Statement {
 
     public static void parser(Node node) {
         if (node instanceof SynchronizedStatement) return;
-        Stream.of(node.getChildrens()).reduce2((list, a, b) -> {
-            Stream.of(a.getChildrens()).reduce2((c, m, n) -> {
-                if (m.equals(TokenType.SYNCHRONIZED) && n instanceof ParametersExpression) {
-                    //create SynchronizedNode and set Prarent，Parameters
-                    SynchronizedStatement statement = new SynchronizedStatement(node, (Expression) n, (BlockStatement) b);
-                    //replace this node with SynchronizedNode
-                    list.replace(a, statement);
-                    list.remove(b);
-                }
-            });
+        Stream.of(node.getChildrens()).reduce2((c, m, n) -> {
+            if (m.equals(TokenType.SYNCHRONIZED) && n instanceof ParametersExpression) {
+                Node b = node.next();
+                //create SynchronizedNode and set Prarent，Parameters
+                SynchronizedStatement statement = new SynchronizedStatement(node, (Expression) n, (BlockStatement) b);
+                //replace this node with SynchronizedNode
+                node.getPrarent().replace(node, statement);
+                node.getPrarent().getChildrens().remove(b);
+            }
         });
     }
 

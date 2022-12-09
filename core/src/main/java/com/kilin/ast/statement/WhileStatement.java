@@ -1,12 +1,10 @@
 package com.kilin.ast.statement;
 
-import com.kilin.ast.lexer.TokenType;
 import com.kilin.ast.Node;
 import com.kilin.ast.Stream;
 import com.kilin.ast.expression.Expression;
 import com.kilin.ast.expression.ParametersExpression;
-
-import java.util.List;
+import com.kilin.ast.lexer.TokenType;
 
 public class WhileStatement extends Statement {
     private Expression condition;
@@ -26,29 +24,26 @@ public class WhileStatement extends Statement {
     public static void parser(Node node) {
         if (node instanceof WhileStatement) return;
         DoWhileStatement.parser(node);
-        Stream.of(node.getChildrens()).reduce((list, a, b) -> {
-            Stream.of(a.getChildrens()).reduce((c, m, n) -> {
-                if (m.equals(TokenType.WHILE) && n instanceof ParametersExpression) {
-                    if (b instanceof BlockStatement) {
-                        //remove WhileNode and Parameters
-                        a.getChildrens().removeAll(List.of(m, n));
-                        //create WhileNode and set prarent, condition
-                        WhileStatement statement = new WhileStatement(node, (Expression) n, (BlockStatement) b);
-                        //remove WhileNode body
-                        node.getChildrens().remove(b);
-                        node.replace(a, statement);
-                        list.remove(b);
-                    } else {
-                        //remove WhileNode and Parameters
-                        a.getChildrens().removeAll(m, n);
-                        //create BlockNode and set Childrens
-                        BlockStatement block = new BlockStatement(null, a.getChildrens());
-                        WhileStatement statement = new WhileStatement(node, (Expression) n, block);
-                        //replace this node whit WhileNode
-                        node.replace(a, statement);
-                    }
+        Stream.of(node.getChildrens()).reduce((c, m, n) -> {
+            if (m.equals(TokenType.WHILE) && n instanceof ParametersExpression) {
+                if (node.next() instanceof BlockStatement b) {
+                    node.getChildrens().removeAll(m, n);
+                    //remove WhileNode and Parameters
+                    //create WhileNode and set prarent, condition
+                    WhileStatement statement = new WhileStatement(node, (Expression) n, (BlockStatement) b);
+                    //remove WhileNode body
+                    node.getPrarent().replace(node, statement);
+                    node.getPrarent().getChildrens().remove(b);
+                } else {
+                    //remove WhileNode and Parameters
+                    node.getChildrens().removeAll(m, n);
+                    //create BlockNode and set Childrens
+                    BlockStatement block = new BlockStatement(null, node.getChildrens());
+                    WhileStatement statement = new WhileStatement(node, (Expression) n, block);
+                    //replace this node whit WhileNode
+                    node.getPrarent().replace(node, statement);
                 }
-            });
+            }
         });
     }
 
