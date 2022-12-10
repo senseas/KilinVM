@@ -102,7 +102,8 @@ public class Parser {
         Node node = new Statement(prarent);
         for (Node o : prarent.getChildrens()) {
             if (o instanceof BlockStatement) {
-                list.addAll(node, o);
+                node.getChildrens().add(o);
+                list.add(node);
                 node = new Statement(prarent);
                 parserStatement(o);
             } else if (o.equals(TokenType.SEMI)) {
