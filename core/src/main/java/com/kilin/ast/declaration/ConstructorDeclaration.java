@@ -35,9 +35,9 @@ public class ConstructorDeclaration extends Declaration {
         if (node instanceof ConstructorDeclaration) return;
 
         Stream.of(node.getChildrens()).reduce((c, m, n, b) -> {
-            if (n instanceof CallableDeclaration o) {
+            if (m instanceof CallableDeclaration o) {
                 List<TokenType> modifiers = node.getMethodModifiers();
-                if (node.isFirst(n)) {
+                if (node.isFirst(m)) {
                     ConstructorDeclaration declare = new ConstructorDeclaration(node.getPrarent(), modifiers, (Name) o.getExpression(), o.getParameters(), (BlockStatement) b);
                     TypeParametersExpression.parser(declare);
                     node.getPrarent().replaceAndRemove(node, declare, b);

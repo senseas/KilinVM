@@ -7,6 +7,7 @@ public class PrimitiveType extends Type {
 
     public PrimitiveType(TokenType type) {
         super(new Name(type));
+        setTokenType(type);
     }
 
     public static Type getPrimitiveType(TokenType type) {

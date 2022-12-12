@@ -6,7 +6,6 @@ public class BytePrimitiveType extends PrimitiveType {
 
     public BytePrimitiveType(TokenType type) {
         super(type);
-        setTokenType(type);
     }
 
 }

@@ -6,7 +6,6 @@ public class BooleanPrimitiveType extends PrimitiveType {
 
     public BooleanPrimitiveType(TokenType type) {
         super(type);
-        setTokenType(type);
     }
 
 }

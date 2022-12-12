@@ -26,12 +26,11 @@ public class SynchronizedStatement extends Statement {
     public static void parser(Node node) {
         if (node instanceof SynchronizedStatement) return;
         Stream.of(node.getChildrens()).reduce((list, m, n, o) -> {
-            if (m.equals(TokenType.SYNCHRONIZED) && n instanceof ParametersExpression) {
+            if (m.equals(TokenType.SYNCHRONIZED)) {
                 //create SynchronizedNode and set Prarent，Parameters
                 SynchronizedStatement statement = new SynchronizedStatement(node, (Expression) n, (BlockStatement) o);
                 //replace this node with SynchronizedNode
                 node.getPrarent().replace(node, statement);
-                list.removeAll(List.of(m, n, o));
                 list.clear();
             }
         });

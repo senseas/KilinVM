@@ -6,7 +6,6 @@ public class FloatPrimitiveType extends PrimitiveType {
 
     public FloatPrimitiveType(TokenType type) {
         super(type);
-        setTokenType(type);
     }
 
 }

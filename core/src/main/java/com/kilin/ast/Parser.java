@@ -101,18 +101,9 @@ public class Parser {
         NodeList<Node> list = new NodeList<>();
         Node node = new Statement(prarent);
         for (Node o : prarent.getChildrens()) {
-            if (o.previous() instanceof ParametersExpression && o instanceof BlockStatement) {
+            if (o instanceof BlockStatement) {
                 node.getChildrens().add(o);
                 list.add(node);
-                node = new Statement(prarent);
-                parserStatement(o);
-            } else if (o.previous() instanceof ArrayExpression && o instanceof BlockStatement) {
-                node.getChildrens().add(o);
-                list.add(node);
-                node = new Statement(prarent);
-                parserStatement(o);
-            } else if (o instanceof BlockStatement) {
-                list.addAll(node, o);
                 node = new Statement(prarent);
                 parserStatement(o);
             } else if (o.equals(TokenType.SEMI)) {
@@ -130,7 +121,7 @@ public class Parser {
         prarent.setChildrens(list);
     }
 
-    public void reduce(Node node) {
+    public static void reducePre(Node node) {
         Name.parser(node);
         TypeParametersExpression.parser(node);
         ArrayAccessExpression.parser(node);
@@ -147,9 +138,26 @@ public class Parser {
         ConditionalExpression.parser(node);
         for (Node n : node.getChildrens()) {
             if (!n.getChildrens().isEmpty()) {
-                reduce(n);
+                reducePre(n);
             }
         }
+    }
+
+    public void reduce(Node node) {
+        Name.parser(node);
+        TypeParametersExpression.parser(node);
+        ArrayAccessExpression.parser(node);
+        ArrayType.parser(node);
+        ArrayCreationExpression.parser(node);
+        UnaryExpression.parser(node);
+        BinaryExpression.parser(node);
+        ConditionalExpression.parser(node);
+        ObjectCreationExpression.parser(node);
+        AssignExpression.parser(node);
+        InstanceOfDeclaration.parser(node);
+        AssertExpression.parser(node);
+        VariableDeclaration.parser(node);
+        ConditionalExpression.parser(node);
         ClassOrInterfaceDeclaration.parser(node);
         ReturnStatement.parser(node);
         BreakStatement.parser(node);
@@ -165,5 +173,10 @@ public class Parser {
         ThrowStatement.parser(node);
         SwitchStatement.parser(node);
         TryStatement.parser(node);
+        for (Node n : node.getChildrens()) {
+            if (!n.getChildrens().isEmpty()) {
+                reduce(n);
+            }
+        }
     }
 }

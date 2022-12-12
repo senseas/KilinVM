@@ -6,7 +6,6 @@ public class DoublePrimitiveType extends PrimitiveType {
 
     public DoublePrimitiveType(TokenType type) {
         super(type);
-        setTokenType(type);
     }
 
 }

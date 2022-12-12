@@ -1,6 +1,7 @@
 package com.kilin.ast.declaration;
 
 import com.kilin.ast.Node;
+import com.kilin.ast.NodeList;
 import com.kilin.ast.Stream;
 import com.kilin.ast.expression.Name;
 import com.kilin.ast.expression.TypeParametersExpression;
@@ -11,12 +12,26 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import static com.kilin.ast.Parser.reducePre;
+
 public class ClassOrInterfaceDeclaration extends TypeDeclaration {
     private List<Object> extendedTypes;
     private List<Object> implementedTypes;
     private List<TokenType> modifiers;
     private Name name;
     private BlockStatement body;
+
+    private static ClassOrInterfaceDeclaration declare;
+
+    public ClassOrInterfaceDeclaration(Node prarent, List<TokenType> modifiers, Name name) {
+        super(prarent);
+        this.modifiers = modifiers;
+        this.name = name;
+
+        this.name.setPrarent(this);
+
+        getChildrens().addAll(name);
+    }
 
     public ClassOrInterfaceDeclaration(Node prarent, List<TokenType> modifiers, Name name, BlockStatement body) {
         super(prarent);
@@ -35,28 +50,27 @@ public class ClassOrInterfaceDeclaration extends TypeDeclaration {
         PackageDeclaration.parser(node);
         ImportDeclaration.parser(node);
 
-        Stream.of(node.getChildrens()).reduce((list, a, b) -> {
-            if (b instanceof BlockStatement) {
-                Stream.of(a.getChildrens()).reduce((c, m, n) -> {
-                    if (m.equals(TokenType.CLASS)) {
-                        List<TokenType> modifiers = a.getFieldModifiers();
-                        ClassOrInterfaceDeclaration declare = new ClassOrInterfaceDeclaration(node.getPrarent(), modifiers, (Name) n, (BlockStatement) b);
-
-                        b.setPrarent(declare);
-                        declare.setChildrens(a.getChildrens());
-                        declare.getChildrens().add(b);
-                        a.getChildrens().remove(m);
-                        node.replaceAndRemove(a, declare, b);
-
-                        TypeParametersExpression.parser(declare);
-                        parserImplements(declare);
-                        parserExtends(declare);
-
-                        ConstructorDeclaration.parser(b);
-                        MethodDeclaration.parser(b);
-                        FieldDeclaration.parser(b);
-                    }
-                });
+        declare = null;
+        Stream.of(node.getChildrens()).reduce((list, m, n) -> {
+            if (m.equals(TokenType.CLASS)) {
+                List<TokenType> modifiers = node.getFieldModifiers();
+                declare = new ClassOrInterfaceDeclaration(node.getPrarent(), modifiers, (Name) n);
+                node.getPrarent().replace(node, declare);
+                TypeParametersExpression.parser(declare);
+                list.remove(n);
+            } else if (Objects.nonNull(declare) && m instanceof BlockStatement b) {
+                reducePre(b);
+                declare.setBody(b);
+                ConstructorDeclaration.parser(b);
+                MethodDeclaration.parser(b);
+                FieldDeclaration.parser(b);
+                list.remove(b);
+            } else if (Objects.nonNull(declare) && m.equals(TokenType.EXTENDS)) {
+                list.remove(n);
+                declare.setExtendedTypes(new NodeList<>(n));
+            } else if (Objects.nonNull(declare) && m.equals(TokenType.IMPLEMENTS)) {
+                list.remove(n);
+                declare.setExtendedTypes(new NodeList<>(n));
             }
         });
     }
@@ -121,13 +135,17 @@ public class ClassOrInterfaceDeclaration extends TypeDeclaration {
         return modifiers;
     }
 
-
     public Name getName() {
         return name;
+    }
+
+    public void setBody(BlockStatement body) {
+        this.body = body;
+        this.body.setPrarent(this);
+        getChildrens().add(body);
     }
 
     public BlockStatement getBody() {
         return body;
     }
-
 }

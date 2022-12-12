@@ -6,7 +6,6 @@ public class LongPrimitiveType extends PrimitiveType {
 
     public LongPrimitiveType(TokenType type) {
         super(type);
-        setTokenType(type);
     }
 
 }

@@ -6,7 +6,6 @@ public class CharPrimitiveType extends PrimitiveType {
 
     public CharPrimitiveType(TokenType type) {
         super(type);
-        setTokenType(type);
     }
 
 }

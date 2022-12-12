@@ -34,22 +34,18 @@ public class EnumDeclaration extends TypeDeclaration {
         PackageDeclaration.parser(node);
         ImportDeclaration.parser(node);
 
-        Stream.of(node.getChildrens()).reduce((list, a, b) -> {
-            if (b instanceof BlockStatement) {
-                Stream.of(a.getChildrens()).reduce((c, m, n) -> {
-                    if (m.equals(ENUM)) {
-                        List<TokenType> modifiers = a.getFieldModifiers();
-                        EnumDeclaration declare = new EnumDeclaration(node.getPrarent(), modifiers, (Name) n, (BlockStatement) b);
-                        a.getChildrens().remove(m);
+        Stream.of(node.getChildrens()).reduce((list, m, n, b) -> {
+            if (m.equals(ENUM)) {
+                List<TokenType> modifiers = node.getFieldModifiers();
+                EnumDeclaration declare = new EnumDeclaration(node.getPrarent(), modifiers, (Name) n, (BlockStatement) b);
+                node.getChildrens().remove(m);
+                node.getPrarent().replace(node, declare);
 
-                        node.replaceAndRemove(a, declare, b);
-                        parserImplements(declare);
-                        EnumConstantDeclaration.parser(b);
-                        ConstructorDeclaration.parser(b);
-                        MethodDeclaration.parser(b);
-                        FieldDeclaration.parser(b);
-                    }
-                });
+                parserImplements(declare);
+                //EnumConstantDeclaration.parser(b);
+                ConstructorDeclaration.parser(b);
+                MethodDeclaration.parser(b);
+                FieldDeclaration.parser(b);
             }
         });
     }
