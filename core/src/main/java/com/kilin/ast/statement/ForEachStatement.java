@@ -29,30 +29,25 @@ public class ForEachStatement extends Statement {
 
     public static void parser(Node node) {
         if (node instanceof ForStatement) return;
-        Stream.of(node.getChildrens()).reduce((list, a, b) -> {
-            Stream.of(a.getChildrens()).reduce((c, m, n) -> {
-                if (m.equals(TokenType.FOR) && n instanceof ParametersExpression && n.getChildrens().get(0).getChildrens().stream().anyMatch(e -> e.equals(TokenType.COLON))) {
-                    NodeList<Node> split = n.getChildrens().get(0).split(TokenType.COLON);
-                    //create ForNode and set Prarent , Parameters
-                    if (b instanceof BlockStatement) {
-                        //remove ForNode and Parameters
-                        a.getChildrens().removeAll(List.of(m, n));
-                        ForEachStatement statement = new ForEachStatement(node, new Expression(null, split.get(0).getChildrens()), new Expression(null, List.of(split.get(1))), (BlockStatement) b);
-                        node.replace(a, statement);
-                        node.getChildrens().remove(b);
-                        list.remove(b);
-                    } else {
-                        //remove ForNode and Parameters
-                        a.getChildrens().removeAll(List.of(m, n));
-                        //create BlockNode and set Childrens
-                        BlockStatement block = new BlockStatement(null, a.getChildrens());
-                        //create ForNode and set Prarent，Parameters
-                        ForEachStatement statement = new ForEachStatement(node, new Expression(null, split.get(0).getChildrens()), new Expression(null, List.of(split.get(1))), block);
-                        //replace this node whit ForNode
-                        node.replace(a, statement);
-                    }
+        Stream.of(node.getChildrens()).reduce((list, a, b, c) -> {
+            if (a.equals(TokenType.FOR) && b instanceof ParametersExpression && b.getChildrens().get(0).getChildrens().stream().anyMatch(e -> e.equals(TokenType.COLON))) {
+                NodeList<Node> split = b.getChildrens().get(0).split(TokenType.COLON);
+                //create ForNode and set Prarent , Parameters
+                if (c instanceof BlockStatement) {
+                    //remove ForNode and Parameters
+                    ForEachStatement statement = new ForEachStatement(node, new Expression(null, split.get(0).getChildrens()), new Expression(null, List.of(split.get(1))), (BlockStatement) c);
+                    node.getPrarent().replace(node, statement);
+                } else {
+                    //remove ForNode and Parameters
+                    node.getChildrens().removeAll(a, b);
+                    //create BlockNode and set Childrens
+                    BlockStatement block = new BlockStatement(null, node.getChildrens());
+                    //create ForNode and set Prarent，Parameters
+                    ForEachStatement statement = new ForEachStatement(node, new Expression(null, split.get(0).getChildrens()), new Expression(null, List.of(split.get(1))), block);
+                    //replace this node whit ForNode
+                    node.getPrarent().replace(node, statement);
                 }
-            });
+            }
         });
     }
 

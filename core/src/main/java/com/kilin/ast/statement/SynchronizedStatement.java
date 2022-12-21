@@ -3,14 +3,12 @@ package com.kilin.ast.statement;
 import com.kilin.ast.Node;
 import com.kilin.ast.Stream;
 import com.kilin.ast.expression.Expression;
-import com.kilin.ast.expression.ParametersExpression;
-import com.kilin.ast.lexer.TokenType;
 
-import java.util.List;
+import static com.kilin.ast.lexer.TokenType.SYNCHRONIZED;
 
 public class SynchronizedStatement extends Statement {
-    private BlockStatement body;
     private Expression expression;
+    private BlockStatement body;
 
     public SynchronizedStatement(Node prarent, Expression expression, BlockStatement body) {
         super(prarent);
@@ -25,10 +23,10 @@ public class SynchronizedStatement extends Statement {
 
     public static void parser(Node node) {
         if (node instanceof SynchronizedStatement) return;
-        Stream.of(node.getChildrens()).reduce((list, m, n, o) -> {
-            if (m.equals(TokenType.SYNCHRONIZED)) {
+        Stream.of(node.getChildrens()).reduce((list, a, b, c) -> {
+            if (a.equals(SYNCHRONIZED)) {
                 //create SynchronizedNode and set Prarent，Parameters
-                SynchronizedStatement statement = new SynchronizedStatement(node, (Expression) n, (BlockStatement) o);
+                SynchronizedStatement statement = new SynchronizedStatement(node, (Expression) b, (BlockStatement) c);
                 //replace this node with SynchronizedNode
                 node.getPrarent().replace(node, statement);
                 list.clear();
@@ -38,6 +36,6 @@ public class SynchronizedStatement extends Statement {
 
     @Override
     public String toString() {
-        return expression.toString().concat("{ ").concat(body.toString()).concat(" }");
+        return "synchronized ".concat(expression.toString()).concat("{ ").concat(body.toString()).concat(" }");
     }
 }

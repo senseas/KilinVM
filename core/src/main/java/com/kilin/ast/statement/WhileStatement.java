@@ -3,10 +3,7 @@ package com.kilin.ast.statement;
 import com.kilin.ast.Node;
 import com.kilin.ast.Stream;
 import com.kilin.ast.expression.Expression;
-import com.kilin.ast.expression.ParametersExpression;
 import com.kilin.ast.lexer.TokenType;
-
-import java.util.List;
 
 public class WhileStatement extends Statement {
     private Expression condition;
@@ -54,5 +51,9 @@ public class WhileStatement extends Statement {
 
     public Statement getBody() {
         return body;
+    }
+
+    public String toString() {
+        return "while ".concat(condition.toString()).concat("{ ").concat(body.toString()).concat(" }");
     }
 }

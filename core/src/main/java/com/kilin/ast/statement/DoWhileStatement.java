@@ -5,8 +5,6 @@ import com.kilin.ast.Stream;
 import com.kilin.ast.expression.Expression;
 import com.kilin.ast.lexer.TokenType;
 
-import java.util.List;
-
 public class DoWhileStatement extends Statement {
     private Expression condition;
     private Statement body;
@@ -24,19 +22,21 @@ public class DoWhileStatement extends Statement {
 
     public static void parser(Node node) {
         if (node instanceof ForStatement) return;
-        Stream.of(node.getChildrens()).reduce((list, a, b, c) -> {
-            Stream.of(a.getChildrens()).reduce((e, m, n) -> {
-                if (m.equals(TokenType.DO) && b instanceof BlockStatement) {
-                    Node condition = c.getChildrens().get(1);
-                    //create ForNode and set Prarent , Parameters
-                    DoWhileStatement statement = new DoWhileStatement(node, (Expression) condition, (Statement) b);
-                    //remove ForNode and Parameters
-                    node.replace(a, statement);
-                    node.getChildrens().removeAll(List.of(b, c));
-                    list.removeAll(List.of(b, c));
-                }
-            });
+        Stream.of(node.getChildrens()).reduce((e, m, n) -> {
+            if (m.equals(TokenType.DO) && n instanceof BlockStatement) {
+                Node next = node.next();
+                Node condition = next.getChildrens().get(1);
+                //create ForNode and set Prarent , Parameters
+                DoWhileStatement statement = new DoWhileStatement(node, (Expression) condition, (Statement) n);
+                //remove ForNode and Parameters
+                node.getPrarent().replace(node, statement);
+                node.getPrarent().getChildrens().remove(next);
+            }
         });
     }
 
+    @Override
+    public String toString() {
+        return "do ".concat("{ ").concat(body.toString()).concat(" }").concat(" while").concat(condition.toString());
+    }
 }

@@ -31,18 +31,18 @@ public class ForStatement extends Statement {
 
     public static void parser(Node node) {
         if (node instanceof ForStatement) return;
-        Stream.of(node.getChildrens()).reduce((list, m, n, o) -> {
-            if (m.equals(TokenType.FOR) && (n instanceof ParametersExpression && !n.getChildrens().get(0).getChildrens().stream().anyMatch(e -> e.equals(TokenType.COLON)))) {
-                List<Node> nodes = n.getChildrens();
-                if (o instanceof BlockStatement) {
+        Stream.of(node.getChildrens()).reduce((list, a, b, c) -> {
+            if (a.equals(TokenType.FOR) && (b instanceof ParametersExpression && !b.getChildrens().get(0).getChildrens().stream().anyMatch(e -> e.equals(TokenType.COLON)))) {
+                List<Node> nodes = b.getChildrens();
+                if (c instanceof BlockStatement) {
                     //create ForNode and set Prarent，Parameters
-                    ForStatement statement = new ForStatement(node, (Expression) nodes.get(0), (Expression) nodes.get(1), (Expression) nodes.get(2), (BlockStatement) o);
+                    ForStatement statement = new ForStatement(node, (Expression) nodes.get(0), (Expression) nodes.get(1), (Expression) nodes.get(2), (BlockStatement) c);
                     //remove ForNode and Parameters
-                    node.getChildrens().removeAll(m, n);
+                    node.getChildrens().removeAll(a, b);
                     node.getPrarent().replace(node, statement);
                 } else {
                     //remove ForNode and Parameters
-                    node.getChildrens().removeAll(m, n);
+                    node.getChildrens().removeAll(a, b);
                     //create BlockNode and set Childrens
                     BlockStatement block = new BlockStatement(null, node.getChildrens());
                     //create ForNode and set Prarent , Parameters
