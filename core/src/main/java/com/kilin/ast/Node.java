@@ -136,8 +136,8 @@ public class Node extends Token {
     @Override
     public String toString() {
         if (Objects.nonNull(getTokenType())) return getTokenType().toString();
-        if (childrens.isEmpty()) return "";
-        return childrens.stream().map(Objects::toString).collect(Collectors.joining(" "));
+        if (getChildrens().isEmpty()) return "";
+        return getChildrens().stream().map(Objects::toString).collect(Collectors.joining(" "));
     }
 
     @Override

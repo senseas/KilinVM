@@ -12,8 +12,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import static com.kilin.ast.Parser.reducePre;
-
 public class ClassOrInterfaceDeclaration extends TypeDeclaration {
     private List<Object> extendedTypes;
     private List<Object> implementedTypes;
@@ -59,7 +57,6 @@ public class ClassOrInterfaceDeclaration extends TypeDeclaration {
                 TypeParametersExpression.parser(declare);
                 list.remove(n);
             } else if (Objects.nonNull(declare) && m instanceof BlockStatement b) {
-                reducePre(b);
                 declare.setBody(b);
                 ConstructorDeclaration.parser(b);
                 MethodDeclaration.parser(b);

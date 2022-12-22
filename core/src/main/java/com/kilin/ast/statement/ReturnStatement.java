@@ -16,17 +16,14 @@ public class ReturnStatement extends Statement {
     }
 
     public static void parser(Node node) {
-        if (node instanceof SynchronizedStatement) return;
-        Stream.of(node.getChildrens()).reduce2((list, a, b) -> {
-            Stream.of(a.getChildrens()).reduce2((c, m, n) -> {
-                if (m.equals(TokenType.RETURN)) {
-                    c.remove(m);
-                    //create SynchronizedNode and set Prarent，Parameters
-                    ReturnStatement statement = new ReturnStatement(node, (Expression) a);
-                    //replace this node with SynchronizedNode
-                    list.replace(a, statement);
-                }
-            });
+        Stream.of(node.getChildrens()).reduce((list, m, n) -> {
+            if (m.equals(TokenType.RETURN)) {
+                node.getChildrens().remove(m);
+                //create SynchronizedNode and set Prarent，Parameters
+                ReturnStatement statement = new ReturnStatement(node, (Expression) node);
+                //replace this node with SynchronizedNode
+                node.getPrarent().replace(node, statement);
+            }
         });
     }
 }

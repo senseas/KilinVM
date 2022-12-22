@@ -3,8 +3,7 @@ package com.kilin.ast.statement;
 import com.kilin.ast.Node;
 import com.kilin.ast.Stream;
 import com.kilin.ast.expression.Expression;
-
-import static com.kilin.ast.lexer.TokenType.SYNCHRONIZED;
+import com.kilin.ast.lexer.TokenType;
 
 public class SynchronizedStatement extends Statement {
     private Expression expression;
@@ -24,7 +23,7 @@ public class SynchronizedStatement extends Statement {
     public static void parser(Node node) {
         if (node instanceof SynchronizedStatement) return;
         Stream.of(node.getChildrens()).reduce((list, a, b, c) -> {
-            if (a.equals(SYNCHRONIZED)) {
+            if (a.equals(TokenType.SYNCHRONIZED)) {
                 //create SynchronizedNode and set Prarent，Parameters
                 SynchronizedStatement statement = new SynchronizedStatement(node, (Expression) b, (BlockStatement) c);
                 //replace this node with SynchronizedNode
