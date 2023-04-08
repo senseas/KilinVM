@@ -20,6 +20,7 @@ public class ArrayAccessExpression extends Expression implements ArrayAccessNode
         this.index.setPrarent(this);
 
         getChildrens().addAll(expression, index);
+        setParsed(true);
     }
 
     public static void parser(Node node) {

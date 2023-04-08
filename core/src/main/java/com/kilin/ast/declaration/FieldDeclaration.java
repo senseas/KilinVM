@@ -42,9 +42,6 @@ public class FieldDeclaration extends Declaration {
     }
 
     public static void parser(Node node) {
-        if (!(node.getPrarent() instanceof ClassOrInterfaceDeclaration)) return;
-        if (node instanceof FieldDeclaration) return;
-
         Stream.of(node.getChildrens()).reduce((c, m, n) -> {
             if (!node.endsTypeof(CallableDeclaration.class) && m instanceof Name && n instanceof Name) {
                 List<TokenType> modifiers = node.getFieldModifiers();

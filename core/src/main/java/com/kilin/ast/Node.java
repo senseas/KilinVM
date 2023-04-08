@@ -11,6 +11,7 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class Node extends Token {
+    private boolean parsed;
     private Node prarent;
     private NodeList<Node> childrens;
 
@@ -38,6 +39,14 @@ public class Node extends Token {
 
     public void setChildrens(NodeList<Node> childrens) {
         this.childrens = childrens;
+    }
+
+    public boolean isParsed() {
+        return parsed;
+    }
+
+    public void setParsed(boolean parsed) {
+        this.parsed = parsed;
     }
 
     public void replaceAndRemove(Node node, Node replaceNode, Object removeNode) {

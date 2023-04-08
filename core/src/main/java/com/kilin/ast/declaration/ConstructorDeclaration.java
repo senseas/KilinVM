@@ -31,9 +31,6 @@ public class ConstructorDeclaration extends Declaration {
     }
 
     public static void parser(Node node) {
-        if (!(node.getPrarent() instanceof TypeDeclaration)) return;
-        if (node instanceof ConstructorDeclaration) return;
-
         Stream.of(node.getChildrens()).reduce((c, m, n, b) -> {
             if (m instanceof CallableDeclaration o) {
                 List<TokenType> modifiers = node.getMethodModifiers();

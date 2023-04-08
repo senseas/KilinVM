@@ -22,6 +22,7 @@ public class BinaryExpression extends Expression {
         this.right.setPrarent(this);
 
         getChildrens().addAll(left, right);
+        setParsed(true);
     }
 
     public static void parser(Node node) {

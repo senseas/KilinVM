@@ -3,22 +3,22 @@ package com.kilin.ast.expression;
 import com.kilin.ast.Node;
 import com.kilin.ast.NodeList;
 import com.kilin.ast.declaration.Declaration;
-import com.kilin.ast.declaration.VariableDeclaration;
 
 import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class VariableExpression extends Declaration {
-    private NodeList<VariableDeclaration> variables;
+    private NodeList<Node> variables;
 
-    public VariableExpression(Node prarent, NodeList<VariableDeclaration> variables) {
+    public VariableExpression(Node prarent, NodeList<Node> variables) {
         super(prarent);
         this.variables = variables;
         variables.forEach(a -> a.setPrarent(this));
         getChildrens().addAll(variables);
+        setParsed(true);
     }
 
-    public NodeList<VariableDeclaration> getVariables() {
+    public NodeList<Node> getVariables() {
         return variables;
     }
 

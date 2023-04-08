@@ -21,7 +21,6 @@ public class SynchronizedStatement extends Statement {
     }
 
     public static void parser(Node node) {
-        if (node instanceof SynchronizedStatement) return;
         Stream.of(node.getChildrens()).reduce((list, a, b, c) -> {
             if (a.equals(TokenType.SYNCHRONIZED)) {
                 //create SynchronizedNode and set Prarent，Parameters

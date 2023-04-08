@@ -22,6 +22,7 @@ public class ObjectCreationExpression extends TypeDeclaration {
         this.parameters.setPrarent(this);
 
         getChildrens().addAll(name, parameters);
+        setParsed(true);
     }
 
     public ObjectCreationExpression(Node prarent, Name name, Expression parameters, BlockStatement body) {
@@ -35,6 +36,7 @@ public class ObjectCreationExpression extends TypeDeclaration {
         this.body.setPrarent(this);
 
         getChildrens().addAll(name, parameters, body);
+        setParsed(true);
     }
 
     public static void parser(Node node) {

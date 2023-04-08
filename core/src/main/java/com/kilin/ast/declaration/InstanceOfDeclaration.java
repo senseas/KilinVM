@@ -23,6 +23,7 @@ public class InstanceOfDeclaration extends Declaration {
         this.type.setPrarent(this);
 
         getChildrens().addAll(expression, type);
+        setParsed(true);
     }
 
     public static void parser(Node node) {

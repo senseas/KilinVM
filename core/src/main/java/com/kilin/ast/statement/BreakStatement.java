@@ -13,9 +13,9 @@ public class BreakStatement extends Statement {
     public static void parser(Node node) {
         Stream.of(node.getChildrens()).reduce2((iterator, m, n) -> {
             if (m.equals(TokenType.BREAK)) {
-                //create SynchronizedNode and set Prarent，Parameters
+                //create BreakNode and set Prarent，Parameters
                 BreakStatement statement = new BreakStatement(node);
-                //replace this node with SynchronizedNode
+                //replace this node with BreakNode
                 iterator.replace(m, statement);
             }
         });

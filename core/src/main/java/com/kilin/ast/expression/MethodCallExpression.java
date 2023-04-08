@@ -21,8 +21,6 @@ public class MethodCallExpression extends Expression {
     }
 
     public static void parser(Node node) {
-        if (node instanceof MethodCallExpression) return;
-        if (node.getPrarent() instanceof TypeDeclaration) return;
         Stream.of(node.getChildrens()).reduce2((list, a, b) -> {
             if (a instanceof CallableDeclaration c) {
                 MethodCallExpression expression = new MethodCallExpression(node, c.getExpression(), c.getParameters());

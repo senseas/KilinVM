@@ -20,6 +20,7 @@ public class AssertExpression extends Expression {
         this.detail.setPrarent(this);
 
         getChildrens().addAll(condition, detail);
+        setParsed(true);
     }
 
     public static void parser(Node node) {

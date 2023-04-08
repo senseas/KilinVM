@@ -20,40 +20,40 @@ public class LambdaExpression extends Expression {
         this.body.setPrarent(this);
 
         getChildrens().addAll(parameters, body);
+        setParsed(true);
     }
 
     public static void parser(Node node) {
-        if (node instanceof LambdaExpression) return;
-        Stream.of(node.getChildrens()).reduce((list, a, b) -> {
-            Stream.of(a.getChildrens()).reduce((c, m, n) -> {
-                if (m instanceof ParametersExpression && Objects.nonNull(n) && n.equals(TokenType.ARROW)) {
-                    if (b instanceof BlockStatement) {
-                        LambdaExpression expression = new LambdaExpression(node, (Expression) m, (BlockStatement) b);
-                        node.replaceAndRemove(a, expression, b);
-                        list.remove(b);
-                    } else {
-                        a.getChildrens().removeAll(m, n);
-                        BlockStatement block = new BlockStatement(null, a.getChildrens());
-                        LambdaExpression expression = new LambdaExpression(node, (Expression) m, block);
-                        node.replace(a, expression);
-                    }
-                } else if (m instanceof Name && Objects.nonNull(n) && n.equals(TokenType.ARROW)) {
-                    if (b instanceof BlockStatement) {
-                        ParametersExpression parameters = new ParametersExpression(null);
-                        parameters.getChildrens().add(m);
-                        LambdaExpression expression = new LambdaExpression(node, parameters, (BlockStatement) b);
-                        node.replaceAndRemove(a, expression, b);
-                        list.remove(b);
-                    } else {
-                        a.getChildrens().removeAll(m, n);
-                        ParametersExpression parameters = new ParametersExpression(null);
-                        parameters.getChildrens().add(m);
-                        BlockStatement block = new BlockStatement(null, a.getChildrens());
-                        LambdaExpression expression = new LambdaExpression(node, parameters, block);
-                        node.replace(a, expression);
-                    }
+        Stream.of(node.getChildrens()).reduce((c, m, n, b) -> {
+            if (m instanceof ParametersExpression && Objects.nonNull(n) && n.equals(TokenType.ARROW)) {
+                if (b instanceof BlockStatement) {
+                    LambdaExpression expression = new LambdaExpression(node, (Expression) m, (BlockStatement) b);
+                    node.replace(m, expression);
+                    node.getChildrens().removeAll(n, b);
+                } else {
+                    BlockStatement block = new BlockStatement(null, node.getChildrens());
+                    LambdaExpression expression = new LambdaExpression(node, (Expression) m, block);
+                    node.replace(m, expression);
+                    node.getChildrens().removeAll(block.getChildrens());
+                    block.getChildrens().removeAll(m, n);
                 }
-            });
+            } else if (m instanceof Name && Objects.nonNull(n) && n.equals(TokenType.ARROW)) {
+                if (b instanceof BlockStatement) {
+                    ParametersExpression parameters = new ParametersExpression(null);
+                    parameters.getChildrens().add(m);
+                    LambdaExpression expression = new LambdaExpression(node, parameters, (BlockStatement) b);
+                    node.replace(m, expression);
+                    node.getChildrens().removeAll(n, b);
+                } else {
+                    ParametersExpression parameters = new ParametersExpression(null);
+                    parameters.getChildrens().add(m);
+                    BlockStatement block = new BlockStatement(null, node.getChildrens());
+                    LambdaExpression expression = new LambdaExpression(node, parameters, block);
+                    node.replace(m, expression);
+                    node.getChildrens().removeAll(block.getChildrens());
+                    block.getChildrens().removeAll(m, n);
+                }
+            }
         });
     }
 

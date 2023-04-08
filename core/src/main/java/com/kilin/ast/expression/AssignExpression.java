@@ -24,6 +24,7 @@ public class AssignExpression extends Expression implements AssignNode {
         this.value.setPrarent(this);
 
         getChildrens().addAll(variable, value);
+        setParsed(true);
     }
 
     public static void parser(Node node) {

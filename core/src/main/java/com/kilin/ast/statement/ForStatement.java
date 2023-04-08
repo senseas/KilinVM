@@ -30,7 +30,6 @@ public class ForStatement extends Statement {
     }
 
     public static void parser(Node node) {
-        if (node instanceof ForStatement) return;
         Stream.of(node.getChildrens()).reduce((list, a, b, c) -> {
             if (a.equals(TokenType.FOR) && (b instanceof ParametersExpression && !b.getChildrens().get(0).getChildrens().stream().anyMatch(e -> e.equals(TokenType.COLON)))) {
                 List<Node> nodes = b.getChildrens();

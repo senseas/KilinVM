@@ -19,11 +19,10 @@ public class CallableDeclaration extends Declaration {
         this.parameters.setPrarent(this);
 
         getChildrens().addAll(expression, parameters);
+        setParsed(true);
     }
 
     public static void parser(Node node) {
-        if (node instanceof CallableDeclaration) return;
-        if (node instanceof MethodDeclaration) return;
         LambdaExpression.parser(node);
         Stream.of(node.getChildrens()).reduce2((list, m, n) -> {
             if (m instanceof Expression && n instanceof ParametersExpression) {

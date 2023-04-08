@@ -24,6 +24,7 @@ public class ConditionalExpression extends Expression {
         this.falseExpression.setPrarent(this);
 
         getChildrens().addAll(condition, trueExpression, falseExpression);
+        setParsed(true);
     }
 
     public static void parser(Node node) {

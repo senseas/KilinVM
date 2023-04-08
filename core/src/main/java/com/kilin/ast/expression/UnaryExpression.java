@@ -19,6 +19,7 @@ public class UnaryExpression extends Expression {
         this.expression = expression;
         this.expression.setPrarent(this);
         getChildrens().add(expression);
+        setParsed(true);
     }
 
     public static void parser(Node node) {

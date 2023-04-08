@@ -66,6 +66,7 @@ public class Parser {
         CompilationUnit compilationUnit = new CompilationUnit();
         parserBlockStatement(compilationUnit);
         parserStatement(compilationUnit);
+        reducePre(compilationUnit);
         reduce(compilationUnit);
     }
 
@@ -122,28 +123,11 @@ public class Parser {
     }
 
     public static void reducePre(Node node) {
-        Name.parser(node);
-        TypeParametersExpression.parser(node);
-        ArrayAccessExpression.parser(node);
-        ArrayType.parser(node);
-        ArrayCreationExpression.parser(node);
-        UnaryExpression.parser(node);
-        BinaryExpression.parser(node);
-        ConditionalExpression.parser(node);
-        ObjectCreationExpression.parser(node);
-        AssignExpression.parser(node);
-        InstanceOfDeclaration.parser(node);
-        AssertExpression.parser(node);
-        VariableDeclaration.parser(node);
-        ConditionalExpression.parser(node);
         for (Node n : node.getChildrens()) {
-            if (!n.getChildrens().isEmpty()) {
+            if (!n.isParsed() && !n.getChildrens().isEmpty()) {
                 reducePre(n);
             }
         }
-    }
-
-    public void reduce(Node node) {
         Name.parser(node);
         TypeParametersExpression.parser(node);
         ArrayAccessExpression.parser(node);
@@ -157,7 +141,14 @@ public class Parser {
         InstanceOfDeclaration.parser(node);
         AssertExpression.parser(node);
         VariableDeclaration.parser(node);
-        ConditionalExpression.parser(node);
+    }
+
+    public void reduce(Node node) {
+        for (Node n : node.getChildrens()) {
+            if (!n.isParsed() &&!n.getChildrens().isEmpty()) {
+                reduce(n);
+            }
+        }
         ClassOrInterfaceDeclaration.parser(node);
         ReturnStatement.parser(node);
         BreakStatement.parser(node);
@@ -173,10 +164,5 @@ public class Parser {
         ThrowStatement.parser(node);
         SwitchStatement.parser(node);
         TryStatement.parser(node);
-        for (Node n : node.getChildrens()) {
-            if (!n.getChildrens().isEmpty()) {
-                reduce(n);
-            }
-        }
     }
 }

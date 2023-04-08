@@ -51,21 +51,21 @@ public class TryStatement extends Statement {
     }
 
     public static void parser(Node node) {
-        CatchClause.parser(node);
+        //CatchClause.parser(node);
         statement = null;
         Stream.of(node.getChildrens()).reduce((list, a, b, c) -> {
             Stream.of(a.getChildrens()).reduce((o, m, n) -> {
-                if (m.equals(TokenType.TRY) && b instanceof BlockStatement) {
+                if (m.equals(TokenType.TRY) && n instanceof BlockStatement) {
                     if (n instanceof ParametersExpression) {
                         //create TryNode and set Prarent , resources , tryBody
-                        statement = new TryStatement(node, (Expression) n, (BlockStatement) b);
+                        statement = new TryStatement(node, (Expression) n, (BlockStatement) n);
                         //remove TryNode and Parameters
                         node.replace(a, statement);
                         node.getChildrens().remove(b);
                         list.remove(b);
                     } else {
                         //create TryNode and set Prarent , tryBody
-                        statement = new TryStatement(node, (BlockStatement) b);
+                        statement = new TryStatement(node, (BlockStatement) n);
                         //remove TryNode and Parameters
                         node.replace(a, statement);
                         node.getChildrens().remove(b);
@@ -77,7 +77,7 @@ public class TryStatement extends Statement {
                         node.getChildrens().remove(a);
                         o.clear();
                     } else if (m.equals(TokenType.FINALLY)) {
-                        statement.setFinallyBody((BlockStatement) b);
+                        statement.setFinallyBody((BlockStatement) n);
                         node.getChildrens().removeAll(a, b);
                         list.remove(b);
                     }

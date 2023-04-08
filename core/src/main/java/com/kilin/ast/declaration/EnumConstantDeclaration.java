@@ -20,8 +20,6 @@ public class EnumConstantDeclaration extends Declaration {
     }
 
     public static void parser(Node node) {
-        if (!(node.getPrarent() instanceof EnumDeclaration)) return;
-        if (node instanceof EnumConstantDeclaration) return;
         comma = new Node(TokenType.COMMA);
         Stream.of(node.getChildrens()).reduce((list, a, b) -> {
             Stream.of(a.getChildrens()).reduce((c, m, n) -> {

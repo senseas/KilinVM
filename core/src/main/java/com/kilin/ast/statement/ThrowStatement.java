@@ -14,7 +14,6 @@ public class ThrowStatement extends Statement {
     }
 
     public static void parser(Node node) {
-        if (node instanceof ThrowStatement) return;
         Stream.of(node.getChildrens()).reduce((list, a, b) -> {
             if (a.equals(TokenType.THROW)) {
                 ThrowStatement statement = new ThrowStatement(node);

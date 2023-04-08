@@ -25,6 +25,7 @@ public class VariableDeclaration extends Declaration {
         this.name.setPrarent(this);
 
         getChildrens().addAll(type, name);
+        setParsed(true);
     }
 
     public VariableDeclaration(Node prarent, Type type, Expression name, Expression initializer) {
@@ -38,13 +39,10 @@ public class VariableDeclaration extends Declaration {
         this.initializer.setPrarent(this);
 
         getChildrens().addAll(type, name, initializer);
+        setParsed(true);
     }
 
     public static void parser(Node node) {
-        if (node.getPrarent() instanceof ParametersExpression) return;
-        if (node instanceof MethodDeclaration) return;
-        if (node instanceof FieldDeclaration) return;
-        if (node instanceof VariableDeclaration) return;
         List<Node> nodes = node.getChildrens().stream().filter(a -> Field_Modifiers.contains(a.getTokenType())).toList();
         node.getChildrens().removeAll(nodes);
         variableType = null;
@@ -79,7 +77,7 @@ public class VariableDeclaration extends Declaration {
         });
 
         if (Objects.nonNull(variableType) && node.getChildrens().size() > 1) {
-            NodeList<VariableDeclaration> variableDeclarations = new NodeList(node.getChildrens());
+            NodeList<Node> variableDeclarations = new NodeList(node.getChildrens());
             VariableExpression variableExpression = new VariableExpression(node.getPrarent(), variableDeclarations);
             node.getPrarent().replace(node, variableExpression);
         }

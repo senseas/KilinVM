@@ -16,6 +16,7 @@ public class ArrayCreationExpression extends Expression {
         this.type = type;
         this.type.setPrarent(this);
         getChildrens().add(type);
+        setParsed(true);
     }
 
     public ArrayCreationExpression(Node prarent, Type type, BlockStatement initializer) {
@@ -27,6 +28,7 @@ public class ArrayCreationExpression extends Expression {
         this.initializer.setPrarent(this);
 
         getChildrens().addAll(type, initializer);
+        setParsed(true);
     }
 
     public static void parser(Node node) {

@@ -21,7 +21,6 @@ public class WhileStatement extends Statement {
     }
 
     public static void parser(Node node) {
-        if (node instanceof WhileStatement) return;
         DoWhileStatement.parser(node);
         Stream.of(node.getChildrens()).reduce((list, m, condition, body) -> {
             if (m.equals(TokenType.WHILE)) {
